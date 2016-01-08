@@ -13,10 +13,49 @@ Actor::Actor(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf
 	this->jump_limit = 1.0; //the player is able to jump as often as this (in seconds)
 }
 
+void Actor::createActorBody(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type)
+{
+	this->entity_body = new Object( window, world, fixture, texture, current_index, body_type, shape_type );
+	this->entity_body->getBody()->SetFixedRotation( true );	
+
+	//set position of robot body first, then connect the joint
+	this->entity_body->getBody()->SetTransform( b2Vec2( this->entity->getBody()->GetPosition().x, this->entity->getBody()->GetPosition().y + (115 * PIXELS_TO_METERS) ), 0 );
+	this->entity_body->updateSpritePos();
+
+	//used to connect the body to the base. No sprite used with this
+	sf::Vector2f connector_size;
+	connector_size.x = 15; // this->entity->getSprite()->getPosition().x - this->entity_body->getSprite()->getPosition().x;
+	connector_size.y = this->entity->getSprite()->getPosition().y - this->entity_body->getSprite()->getPosition().y;
+	this->body_connector = new Object( window, world, fixture, connector_size, current_index, body_type, shape_type );
+
+	b2RevoluteJointDef revolute_joint_def;
+	revolute_joint_def.bodyA = this->entity->getBody();
+	revolute_joint_def.localAnchorA.Set( 0, 0 );
+
+	revolute_joint_def.bodyB = this->body_connector->getBody();
+	revolute_joint_def.localAnchorB.Set( 0, -1 );
+	revolute_joint_def.collideConnected = false;
+	world->CreateJoint( &revolute_joint_def );
+
+	b2WeldJointDef weld_joint_def;
+	weld_joint_def.bodyA = this->entity_body->getBody();
+	weld_joint_def.localAnchorA.Set( 0, -1 );
+	
+	weld_joint_def.bodyB = this->body_connector->getBody();
+	weld_joint_def.localAnchorB.Set( 0, 1 );
+	weld_joint_def.collideConnected = false;
+	world->CreateJoint( &weld_joint_def );
+
+}
+
 void Actor::playerUpdate()
 {
 	this->entity->updateSpritePos(); //updates the player sprite to the box2d object position
 
+	//REMOVE THE SET TRANSFORM CALL FOR THE BODY ONCE THE JOINT IS WORKING.
+	//this->entity_body->getBody()->SetTransform( b2Vec2( this->entity->getBody()->GetPosition().x, this->entity->getBody()->GetPosition().y + (55 * PIXELS_TO_METERS) ), 0 );
+
+	this->entity_body->updateSpritePos();
 	this->jump_clock.update(); //used to determine if the player can jump
 	this->keyboardControl(); //used to control player movement
 }
@@ -77,5 +116,10 @@ void Actor::keyboardControl()
 Object* Actor::getEntity()
 {
 	return( this->entity );
+}
+
+Object* Actor::getEntityBody()
+{
+	return( this->entity_body );
 }
 

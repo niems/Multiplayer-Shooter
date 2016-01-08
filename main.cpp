@@ -58,21 +58,35 @@ int main()
 	///////////END BACKGROUND SETUP///////////////////////////
 
 	//NEW PLAYER SETUP////////////////////////////
-	sf::Texture player_texture;
+	sf::Texture player_base_texture;
+	sf::Texture player_body_texture;
 	b2FixtureDef player_fixture;
+	b2FixtureDef player_body_fixture;
 
 	player_fixture.density = 1;
 	player_fixture.friction = 0.5;
-	player_fixture.restitution = 0.3;
+	player_fixture.restitution = 0;
 
-	if( !player_texture.loadFromFile("images//robot_base.png") )
+	player_body_fixture.density = 0.01;
+	player_body_fixture.restitution = 0;
+
+	if( !player_base_texture.loadFromFile("images//wheel6.png") )
 	{
-		cout << "Failed to load player texture on line: " << __LINE__ << endl;
+		cout << "Failed to load player base texture on line: " << __LINE__ << endl;
 	}
 
-	Actor player(window, world, player_fixture, player_texture, -1, DYNAMIC, CIRCLE_SHAPE);
+	if( !player_body_texture.loadFromFile("images//robot_head.png") )
+	{
+		cout << "Failed to load player body texture on line: " << __LINE__ << endl;
+	}
+
+	Actor player(window, world, player_fixture, player_base_texture, -1, DYNAMIC, CIRCLE_SHAPE);
 	player.getEntity()->getBody()->SetTransform( b2Vec2( (window_size.x / 2.0) * PIXELS_TO_METERS, -100 * PIXELS_TO_METERS ), 0 );
-	player.getEntity()->getBody()->SetAngularVelocity( 350 * PIXELS_TO_METERS );
+	player.getEntity()->getBody()->SetAngularVelocity( 100 * PIXELS_TO_METERS );
+
+	player.createActorBody( window, world, player_body_fixture, player_body_texture, -1, DYNAMIC, POLY_SHAPE );
+
+
 	//END NEW PLAYER SETUP////////////////////////
 
 	//NEW GROUND SETUP///////////////////////////
@@ -81,7 +95,7 @@ int main()
 
 	ground_fixture.density = 1;
 	ground_fixture.friction = 0.3;
-	ground_fixture.restitution = 0.5;
+	ground_fixture.restitution = 0.3;
 
 	if( !ground_texture.loadFromFile("images//ground.png") )
 	{
@@ -89,7 +103,7 @@ int main()
 	}
 
 	Object ground_object(window, world, ground_fixture, ground_texture, -1, STATIC, POLY_SHAPE);
-	ground_object.getBody()->SetTransform( b2Vec2( (window_size.x / 2.0) * PIXELS_TO_METERS, -(window_size.y / 1.1) * PIXELS_TO_METERS ), 0 );
+	ground_object.getBody()->SetTransform( b2Vec2( (window_size.x / 2.0) * PIXELS_TO_METERS, -(window_size.y / 1.5) * PIXELS_TO_METERS ), 0 );
 	ground_object.updateSpritePos();
 
 	//END NEW GROUND SETUP///////////////////////
@@ -126,6 +140,7 @@ int main()
 
 		//draw player
 		window.draw( *player.getEntity()->getSprite() );
+		window.draw( *player.getEntityBody()->getSprite() );
 		
 
         window.display();
