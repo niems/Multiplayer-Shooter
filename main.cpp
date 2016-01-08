@@ -60,6 +60,10 @@ int main()
 	//NEW PLAYER SETUP////////////////////////////
 	sf::Texture player_base_texture;
 	sf::Texture player_body_texture;
+	sf::Texture player_head_texture;
+	sf::Texture player_neck_texture1;
+	sf::Texture player_neck_texture2;
+
 	b2FixtureDef player_fixture;
 	b2FixtureDef player_body_fixture;
 
@@ -75,16 +79,31 @@ int main()
 		cout << "Failed to load player base texture on line: " << __LINE__ << endl;
 	}
 
-	if( !player_body_texture.loadFromFile("images//robot_head.png") )
+	if( !player_body_texture.loadFromFile("images//robot_body.png") )
 	{
 		cout << "Failed to load player body texture on line: " << __LINE__ << endl;
 	}
 
+	if( !player_head_texture.loadFromFile("images//robot_head.png") )
+	{
+		cout << "Failed to load player head texture on line: " << __LINE__ << endl;
+	}
+
+	if( !player_neck_texture1.loadFromFile("images//robot_neck1.png") )
+	{
+		cout << "Failed to load player neck disk 1 texture on line: " << __LINE__ << endl;
+	}
+
+	if( !player_neck_texture2.loadFromFile("images//robot_neck2.png") )
+	{
+		cout << "Failed to load player neck disk 2 texture on line: " << __LINE__ << endl;
+	}
+
 	Actor player(window, world, player_fixture, player_base_texture, -1, DYNAMIC, CIRCLE_SHAPE);
 	player.getEntity()->getBody()->SetTransform( b2Vec2( (window_size.x / 2.0) * PIXELS_TO_METERS, -100 * PIXELS_TO_METERS ), 0 );
-	player.getEntity()->getBody()->SetAngularVelocity( 100 * PIXELS_TO_METERS );
+	player.getEntity()->getBody()->SetAngularVelocity( 50 * PIXELS_TO_METERS );
 
-	player.createActorBody( window, world, player_body_fixture, player_body_texture, -1, DYNAMIC, POLY_SHAPE );
+	//player.createActorBody( window, world, player_body_fixture, player_head_texture, -1, DYNAMIC, POLY_SHAPE );
 
 
 	//END NEW PLAYER SETUP////////////////////////
@@ -140,7 +159,7 @@ int main()
 
 		//draw player
 		window.draw( *player.getEntity()->getSprite() );
-		window.draw( *player.getEntityBody()->getSprite() );
+		//window.draw( *player.getEntityBody()->getSprite() );
 		
 
         window.display();

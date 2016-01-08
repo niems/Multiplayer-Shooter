@@ -55,7 +55,7 @@ void Actor::playerUpdate()
 	//REMOVE THE SET TRANSFORM CALL FOR THE BODY ONCE THE JOINT IS WORKING.
 	//this->entity_body->getBody()->SetTransform( b2Vec2( this->entity->getBody()->GetPosition().x, this->entity->getBody()->GetPosition().y + (55 * PIXELS_TO_METERS) ), 0 );
 
-	this->entity_body->updateSpritePos();
+	//this->entity_body->updateSpritePos();
 	this->jump_clock.update(); //used to determine if the player can jump
 	this->keyboardControl(); //used to control player movement
 }
@@ -67,7 +67,7 @@ void Actor::keyboardControl()
 	if( sf::Keyboard::isKeyPressed( sf::Keyboard::D ) ) //moving right
 	{
 		b2Vec2 current_velocity = this->entity->getBody()->GetLinearVelocity();
-		float desired_velocity = 250 * PIXELS_TO_METERS;
+		float desired_velocity = 280 * PIXELS_TO_METERS;
 		float velocity_change = desired_velocity - current_velocity.x;
 
 		float impulse = this->entity->getBody()->GetMass() * velocity_change;
@@ -78,7 +78,7 @@ void Actor::keyboardControl()
 	else if( sf::Keyboard::isKeyPressed( sf::Keyboard::A ) ) //moving left
 	{
 		b2Vec2 current_velocity = this->entity->getBody()->GetLinearVelocity();
-		float desired_velocity = -250 * PIXELS_TO_METERS;
+		float desired_velocity = -280 * PIXELS_TO_METERS;
 		float velocity_change = desired_velocity - current_velocity.x;
 		float impulse = this->entity->getBody()->GetMass() * velocity_change;
 
