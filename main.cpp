@@ -61,12 +61,12 @@ int main()
 	player_body_fixture.restitution = 0;
 
 	Actor player(window, world, player_fixture, images.getPlayerTextures()[Image::PLAYER::ROBOT_BASE], -1, DYNAMIC, CIRCLE_SHAPE);
-	player.getEntity()->getBody()->SetTransform( b2Vec2( (window_size.x / 2.0) * PIXELS_TO_METERS, -100 * PIXELS_TO_METERS ), 0 );
-	player.getEntity()->getBody()->SetAngularVelocity( -500 * PIXELS_TO_METERS );
+	player.getRobotBase()->getBody()->SetTransform( b2Vec2( (window_size.x / 2.0) * PIXELS_TO_METERS, -100 * PIXELS_TO_METERS ), 0 );
+	player.getRobotBase()->getBody()->SetAngularVelocity( -500 * PIXELS_TO_METERS );
 
 	player.createRobotBody( window, world, player_body_fixture, images.getPlayerTextures()[Image::PLAYER::ROBOT_BODY], -1, DYNAMIC, POLY_SHAPE );
-	//player.createActorBody( window, world, player_body_fixture, player_head_texture, -1, DYNAMIC, POLY_SHAPE );
-
+	//player.createRobotNeck( window, world, player_body_fixture, images.getPlayerTextures()[Image::PLAYER::ROBOT_NECK1], -1, DYNAMIC, POLY_SHAPE );
+	player.createRobotHead( window, world, player_body_fixture, images.getPlayerTextures()[Image::PLAYER::ROBOT_HEAD], -1, DYNAMIC, POLY_SHAPE );
 
 	//END NEW PLAYER SETUP////////////////////////
 
@@ -113,10 +113,11 @@ int main()
 		window.draw( *ground_object.getSprite() );
 
 		//draw player
+		//window.draw( *player.getRobotNeck()->getSprite() );
+		window.draw( *player.getRobotBase()->getSprite() );
 		window.draw( *player.getRobotBody()->getSprite() );
-		window.draw( *player.getEntity()->getSprite() );
+		window.draw( *player.getRobotHead()->getSprite() );
 		
-		//window.draw( *player.getEntityBody()->getSprite() );
 		
 
         window.display();
