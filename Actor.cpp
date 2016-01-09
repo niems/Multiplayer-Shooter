@@ -35,56 +35,15 @@ void Actor::createRobotBody(sf::RenderWindow &window, b2World *world, b2FixtureD
 
 void Actor::createRobotNeck(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture1, sf::Texture &texture2, int current_index, int body_type, int shape_type)
 {
-	//robot_neck 1 connects to robot_neck 2 and the robot head
-	//robot neck 2 connects to robot neck 1 and the robot body
+	//robot_neck 1 - connects to robot_neck 2 and the robot head
+	this->robot_neck1 = new Object( window, world, fixture, texture1, current_index, body_type, shape_type );
+
+	//robot neck 2 - connects to robot neck 1 and the robot body
+	this->robot_neck2 = new Object( window, world, fixture, texture2, current_index, body_type, shape_type );
+
 	
 }
 
-/*
-Actor::Actor(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Sprite &sprite, sf::Vector2u &texture_size, int current_index, int body_type, int shape_type)
-{
-	this->robot_base = new Object( window, world, fixture, sprite, texture_size, current_index, body_type, shape_type );
-
-	this->jump_limit = 1.0;
-}
-*/
-
-/*
-void Actor::createActorBody(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type)
-{
-	this->entity_body = new Object( window, world, fixture, texture, current_index, body_type, shape_type );
-	this->entity_body->getBody()->SetFixedRotation( true );	
-
-	//set position of robot body first, then connect the joint
-	this->entity_body->getBody()->SetTransform( b2Vec2( this->robot_base->getBody()->GetPosition().x, this->robot_base->getBody()->GetPosition().y + (115 * PIXELS_TO_METERS) ), 0 );
-	this->entity_body->updateSpritePos();
-
-	//used to connect the body to the base. No sprite used with this
-	sf::Vector2f connector_size;
-	connector_size.x = 15; // this->entity->getSprite()->getPosition().x - this->entity_body->getSprite()->getPosition().x;
-	connector_size.y = this->robot_base->getSprite()->getPosition().y - this->entity_body->getSprite()->getPosition().y;
-	this->body_connector = new Object( window, world, fixture, connector_size, current_index, body_type, shape_type );
-
-	b2RevoluteJointDef revolute_joint_def;
-	revolute_joint_def.bodyA = this->robot_base->getBody();
-	revolute_joint_def.localAnchorA.Set( 0, 0 );
-
-	revolute_joint_def.bodyB = this->body_connector->getBody();
-	revolute_joint_def.localAnchorB.Set( 0, -1 );
-	revolute_joint_def.collideConnected = false;
-	world->CreateJoint( &revolute_joint_def );
-
-	b2WeldJointDef weld_joint_def;
-	weld_joint_def.bodyA = this->entity_body->getBody();
-	weld_joint_def.localAnchorA.Set( 0, -1 );
-	
-	weld_joint_def.bodyB = this->body_connector->getBody();
-	weld_joint_def.localAnchorB.Set( 0, 1 );
-	weld_joint_def.collideConnected = false;
-	world->CreateJoint( &weld_joint_def );
-
-}
-*/
 void Actor::playerUpdate()
 {
 	this->robot_base->updateSpritePos(); //updates the player sprite to the box2d object position
@@ -159,10 +118,3 @@ Object* Actor::getRobotBody()
 {
 	return( this->robot_body );
 }
-
-/*
-Object* Actor::getEntityBody()
-{
-	return( this->entity_body );
-}
-*/

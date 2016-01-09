@@ -27,10 +27,6 @@ public:
 	Actor(); //does nothing
 	Actor(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type);
 
-	//Actor(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Sprite &sprite, sf::Vector2u &texture_size, int current_index, int body_type, int shape_type); //NEW - corresponds to new Object() constructor
-
-	//void createActorBody(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type);
-
 	//creates the robot body, connecting it with a joint to the robot base
 	void createRobotBody(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type);
 
@@ -42,7 +38,6 @@ public:
 
 	Object* getEntity(); //returns the entity
 	Object* getRobotBody();
-	//Object* getEntityBody(); //returns the body instead of the base
 };
 
 
