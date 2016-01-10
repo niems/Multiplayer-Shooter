@@ -66,10 +66,18 @@ void Actor::createRobotHead(sf::RenderWindow &window, b2World *world, b2FixtureD
 	
 }
 
-void Actor::createRobotArm(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type)
+void Actor::createRobotArm(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, sf::Texture &robot_body_texture, int current_index, int body_type, int shape_type)
 {
-	this->robot_arm = new Object( window, world, fixture, texture, current_index, body_type, shape_type );
+	this->robot_arm = new Object( window, world, fixture, texture, current_index, body_type, shape_type );	
+	this->robot_arm->getSprite()->setOrigin( texture.getSize().x / 2.0, 0 );
+	
 
+	sf::Vector2f arm_position;
+	arm_position.x = this->robot_body->getSprite()->getPosition().x; 
+	arm_position.y = this->robot_body->getSprite()->getPosition().y;	
+	this->robot_arm->getSprite()->setPosition( arm_position );
+
+	/*
 	//arm to body joint
 	b2RevoluteJointDef revolute_joint_def;
 	revolute_joint_def.bodyA = this->robot_arm->getBody();
@@ -80,15 +88,50 @@ void Actor::createRobotArm(sf::RenderWindow &window, b2World *world, b2FixtureDe
 
 	revolute_joint_def.collideConnected = false;
 	world->CreateJoint( &revolute_joint_def );
+	*/
 }
 
-void Actor::playerUpdate()
+void Actor::updateArmRotation(sf::RenderWindow &window)
 {
+	/*
+	sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+
+	sf::Vector2f difference;
+	float angle = atan2(mouse_pos.y, mouse_pos.x) - atan2( this->robot_arm->getSprite()->getPosition().y, this->robot_arm->getSprite()->getPosition().x );
+
+	this->robot_arm->getBody()->SetTransform( this->robot_arm->getBody()->GetPosition(), angle );
+	*/
+
+	//update based on mouse position and current position
+	 // = atan2( sf::Mouse::getPosition(window).y, sf::Mouse::getPosition(window).x ) * RADTODEG;
+
+	//might need to change calculation based on quadrant
+	sf::Vector2f difference;
+	sf::Vector2f arm_position;
+	arm_position.x = this->robot_body->getSprite()->getPosition().x; 
+	arm_position.y = this->robot_body->getSprite()->getPosition().y - 5.0;	
+	this->robot_arm->getSprite()->setPosition( arm_position );
+
+	difference.x = sf::Mouse::getPosition(window).x - arm_position.x;
+	difference.y = sf::Mouse::getPosition(window).y - arm_position.y;
+
+	float angle = atan2( difference.x, difference.y ) * -RADTODEG;
+
+	cout << "Angle: " << angle << endl;
+	cout << "Mouse: ( " << sf::Mouse::getPosition(window).x << ", " << sf::Mouse::getPosition(window).y << endl;
+	cout << "Body: ( " << arm_position.x << ", " << arm_position.y << " ) " << endl << endl;
+
+	this->robot_arm->getSprite()->setRotation( angle );
+}
+
+void Actor::playerUpdate(sf::RenderWindow &window)
+{
+	this->updateArmRotation(window);
+
 	this->robot_base->updateSpritePos(); //updates the player sprite to the box2d object position
 	this->robot_body->updateSpritePos();
-	//this->robot_neck->updateSpritePos();
 	this->robot_head->updateSpritePos();
-	this->robot_arm->updateSpritePos();
+	//this->robot_arm->updateSpritePos(); //CANNOT USE THIS BECAUSE IT ISN'T CREATING A BOX2D OBJECT. THIS WILL MAKE IT CRASH.
 	
 	this->jump_clock.update(); //used to determine if the player can jump
 	this->keyboardControl(); //used to control player movement

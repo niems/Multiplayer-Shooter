@@ -14,6 +14,8 @@ public:
 	Object(); //does nothing
 	Object(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type); //uses a texture
 
+	Object(sf::RenderWindow &window, b2World *world, sf::Texture &texture, int current_index); //creates an object without the box2d object
+
 	Object(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Vector2f size, int current_index, int body_type, int shape_type); //creates body without a sprite
 
 	void updateSpritePos(); //updates the sprite position to the box2d body position

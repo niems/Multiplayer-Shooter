@@ -3,10 +3,13 @@
 
 #include <Box2D\Box2D.h>
 #include <SFML\Graphics.hpp>
+#include <math.h>
 #include "Object.h"
 #include "Image.h"
 #include "Timer.h"
 
+#define DEGTORAD 0.0174532925199432957f
+#define RADTODEG 57.295779513082320876f
 
 class Actor
 {
@@ -38,9 +41,10 @@ public:
 	void createRobotHead(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type);
 
 	//creates the robot arm, connecting it with a revolute joint from the robot body
-	void createRobotArm(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type);
+	void createRobotArm(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, sf::Texture &robot_body_texture, int current_index, int body_type, int shape_type);
 
-	void playerUpdate(); //called every iteration to update everything that has to do with the player. All other calls are inside this function.
+	void updateArmRotation(sf::RenderWindow &window); //updates the current angle of the arm using box2d - DOESN'T WORK RIGHT NOW
+	void playerUpdate(sf::RenderWindow &window); //called every iteration to update everything that has to do with the player. All other calls are inside this function.
 	void keyboardControl(); //WASD movement update
 
 	Object* getRobotBase(); //returns the entity
