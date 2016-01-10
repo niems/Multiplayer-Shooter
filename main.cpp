@@ -94,6 +94,7 @@ int main()
 
 	//END NEW GROUND SETUP///////////////////////
 
+	Timer damage_clock;
 	
 
     while (window.isOpen())
@@ -111,8 +112,26 @@ int main()
 		world->Step( timeStep, velocity_iterations, position_iterations );
 
 		//update clocks
+		damage_clock.update();
 		
 		player.playerUpdate(window); //updates everything to do with the player
+
+
+		if( damage_clock.getElapsedTime() >= 0.1 )
+		{
+			if( sf::Keyboard::isKeyPressed( sf::Keyboard::R ) )
+			{
+				player.getHealthBar()->damage(10);
+				damage_clock.restartClock();
+			}
+
+			else if( sf::Keyboard::isKeyPressed( sf::Keyboard::T ) )
+			{
+				player.getHealthBar()->heal(10);
+				damage_clock.restartClock();
+			}
+		}
+		
 		
 
 		//draw to display

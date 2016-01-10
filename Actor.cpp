@@ -12,7 +12,7 @@ Actor::Actor(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf
 
 	this->jump_limit = 1.0; //the player is able to jump as often as this (in seconds)
 
-	sf::Vector2f size( texture.getSize().x, texture.getSize().y );
+	sf::Vector2f size( texture.getSize().x * 1.5, texture.getSize().y );
 	sf::Vector2f pos( this->robot_base->getSprite()->getPosition() );
 
 	this->healthbar = new Health( size, pos, 100, 100 );

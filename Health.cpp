@@ -34,7 +34,7 @@ Health::Health(sf::Vector2f &size, sf::Vector2f &pos, int current_hp, int max_hp
 void Health::updateBar(sf::Vector2f &pos)
 {
 	pos.x -= this->offset.x;
-	pos.y -= this->offset.y + 15.0;
+	pos.y -= this->offset.y + 20.0;
 	this->bar->setPosition(pos);
 }
 
