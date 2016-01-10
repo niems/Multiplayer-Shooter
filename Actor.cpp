@@ -11,6 +11,11 @@ Actor::Actor(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf
 	this->robot_base = new Object( window, world, fixture, texture, current_index, body_type, shape_type );
 
 	this->jump_limit = 1.0; //the player is able to jump as often as this (in seconds)
+
+	sf::Vector2f size( texture.getSize().x, texture.getSize().y );
+	sf::Vector2f pos( this->robot_base->getSprite()->getPosition() );
+
+	this->healthbar = new Health( size, pos, 100, 100 );
 }
 
 void Actor::createRobotBody(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type)
@@ -113,7 +118,8 @@ void Actor::playerUpdate(sf::RenderWindow &window)
 	this->robot_base->updateSpritePos(); //updates the player sprite to the box2d object position
 	this->robot_body->updateSpritePos();
 	this->robot_head->updateSpritePos();
-	//this->robot_arm->updateSpritePos(); //CANNOT USE THIS BECAUSE IT ISN'T CREATING A BOX2D OBJECT. THIS WILL MAKE IT CRASH.
+
+	this->healthbar->updateBar( sf::Vector2f( this->robot_head->getSprite()->getPosition().x, this->robot_head->getSprite()->getPosition().y ) );
 
 	if( sf::Mouse::getPosition(window).x < this->robot_head->getSprite()->getPosition().x && this->robot_head->getSprite()->getRotation() != 180 )
 	{
@@ -205,4 +211,9 @@ Object* Actor::getRobotHead()
 Object* Actor::getRobotArm()
 {
 	return( this->robot_arm );
+}
+
+Health* Actor::getHealthBar()
+{
+	return( this->healthbar );
 }

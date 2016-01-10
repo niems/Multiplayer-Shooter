@@ -5,6 +5,7 @@
 #include <SFML\Graphics.hpp>
 #include <math.h>
 #include "Object.h"
+#include "Health.h"
 #include "Image.h"
 #include "Timer.h"
 
@@ -19,6 +20,7 @@ private:
 	Object *robot_neck;
 	Object *robot_head;
 	Object *robot_arm;
+	Health *healthbar;
 	//Object *body_connector; //connects the base to the body (no sprite used for this)
 	//Object *entity_body; //body of the robot
 	
@@ -52,6 +54,7 @@ public:
 	Object* getRobotNeck();
 	Object* getRobotHead();
 	Object* getRobotArm();
+	Health* getHealthBar();
 
 };
 

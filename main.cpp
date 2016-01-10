@@ -55,14 +55,6 @@ int main()
 	///////////END BACKGROUND SETUP///////////////////////////
 
 	//NEW PLAYER SETUP////////////////////////////
-	/*
-	sf::Vector2f arm_position;
-	this->robot_arm->getSprite()->setOrigin( texture.getSize().x / 2.0, 0 );
-
-	arm_position.x = this->robot_body->getSprite()->getPosition().x + (robot_body_texture.getSize().x / 2.0); 
-	arm_position.y = this->robot_body->getSprite()->getPosition().y;
-	*/
-
 	b2FixtureDef player_fixture;
 	b2FixtureDef player_body_fixture;
 
@@ -84,7 +76,6 @@ int main()
 	player.createRobotBody( window, world, player_body_fixture, images.getPlayerTextures()[Image::PLAYER::ROBOT_BODY], -1, DYNAMIC, POLY_SHAPE );
 	player.createRobotHead( window, world, player_body_fixture, images.getPlayerTextures()[Image::PLAYER::ROBOT_HEAD], -1, DYNAMIC, POLY_SHAPE );
 	player.createRobotArm( window, world, player_body_fixture, images.getPlayerTextures()[Image::PLAYER::ROBOT_ARM], images.getPlayerTextures()[Image::ROBOT_BODY], -1, DYNAMIC, POLY_SHAPE );
-
 
 	//END NEW PLAYER SETUP////////////////////////
 
@@ -139,6 +130,8 @@ int main()
 		window.draw( *player.getRobotBody()->getSprite() );
 		window.draw( *player.getRobotHead()->getSprite() );
 		window.draw( *player.getRobotArm()->getSprite() );
+
+		window.draw( *player.getHealthBar()->getBar() );
 		
 		
 
