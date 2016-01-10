@@ -22,7 +22,8 @@ Health::Health(sf::Vector2f &size, sf::Vector2f &pos, int current_hp, int max_hp
 	this->bar = new sf::RectangleShape();
 	this->bar->setSize(bar_size);
 	this->bar->setOrigin( 0.0, bar_size.y / 2.0 );
-	this->bar->setFillColor( sf::Color(0, 255, 0) );
+	//this->bar->setFillColor( sf::Color(0, 255, 0) );
+	this->bar->setFillColor( sf::Color( 0, 255, 255 ) );
 	this->bar->setOutlineThickness(3);
 	this->bar->setOutlineColor( sf::Color(0, 0, 0) );
 
@@ -69,12 +70,15 @@ float Health::colorBar()
 	float scale = this->current_health / static_cast<float>(this->max_health);
 
 	if(scale >= 0.7)
-		this->bar->setFillColor( sf::Color(0, 255, 0) );
+		this->bar->setFillColor( sf::Color( 0, 255, 255 ) );
+		//this->bar->setFillColor( sf::Color(0, 255, 0) );
 
 	else if(scale >= 0.5)
-		this->bar->setFillColor( sf::Color(255, 255, 0) );
+		this->bar->setFillColor( sf::Color( 0, 255, 255 ) );
+		//this->bar->setFillColor( sf::Color(255, 255, 0) );
 
 	else
+		//this->bar->setFillColor( sf::Color( 0, 255, 255 ) );
 		this->bar->setFillColor( sf::Color(255, 0, 0) );
 
 	return scale;
