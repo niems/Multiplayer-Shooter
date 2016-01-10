@@ -51,6 +51,14 @@ Object::Object(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, 
 	this->body = body;	
 }
 
+Object::Object(sf::RenderWindow &window, b2World *world, sf::Texture &texture, int current_index)
+{
+	sf::Sprite sprite;
+
+	sprite.setTexture( texture );
+	sprite.setOrigin( texture.getSize().x / 2.0, texture.getSize().y / 2.0 );
+}
+
 Object::Object(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Vector2f size, int current_index, int body_type, int shape_type)
 {
 	b2BodyDef body_def;

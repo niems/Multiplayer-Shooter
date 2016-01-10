@@ -8,54 +8,133 @@ const float METERS_TO_PIXELS = 30.0; //number of pixels in one meter
 
 Actor::Actor(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type)
 {
-	this->entity = new Object( window, world, fixture, texture, current_index, body_type, shape_type );
+	this->robot_base = new Object( window, world, fixture, texture, current_index, body_type, shape_type );
 
 	this->jump_limit = 1.0; //the player is able to jump as often as this (in seconds)
+
+	sf::Vector2f size( texture.getSize().x * 1.5, texture.getSize().y );
+	sf::Vector2f pos( this->robot_base->getSprite()->getPosition() );
+
+	this->healthbar = new Health( size, pos, 100, 100 );
 }
 
-void Actor::createActorBody(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type)
+void Actor::createRobotBody(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type)
 {
-	this->entity_body = new Object( window, world, fixture, texture, current_index, body_type, shape_type );
-	this->entity_body->getBody()->SetFixedRotation( true );	
-
-	//set position of robot body first, then connect the joint
-	this->entity_body->getBody()->SetTransform( b2Vec2( this->entity->getBody()->GetPosition().x, this->entity->getBody()->GetPosition().y + (115 * PIXELS_TO_METERS) ), 0 );
-	this->entity_body->updateSpritePos();
-
-	//used to connect the body to the base. No sprite used with this
-	sf::Vector2f connector_size;
-	connector_size.x = 15; // this->entity->getSprite()->getPosition().x - this->entity_body->getSprite()->getPosition().x;
-	connector_size.y = this->entity->getSprite()->getPosition().y - this->entity_body->getSprite()->getPosition().y;
-	this->body_connector = new Object( window, world, fixture, connector_size, current_index, body_type, shape_type );
-
+	this->robot_body = new Object( window, world, fixture, texture, current_index, body_type, shape_type );
+	this->robot_body->getBody()->SetTransform( b2Vec2( this->robot_base->getBody()->GetPosition().x, this->robot_base->getBody()->GetPosition().y + ((texture.getSize().x / 2.1) * PIXELS_TO_METERS) ), 0);
+	
+	this->robot_body->getBody()->SetFixedRotation( true );
+	
 	b2RevoluteJointDef revolute_joint_def;
-	revolute_joint_def.bodyA = this->entity->getBody();
+
+	revolute_joint_def.bodyA = this->robot_base->getBody();
 	revolute_joint_def.localAnchorA.Set( 0, 0 );
 
-	revolute_joint_def.bodyB = this->body_connector->getBody();
-	revolute_joint_def.localAnchorB.Set( 0, -1 );
+	revolute_joint_def.bodyB = this->robot_body->getBody();
+	revolute_joint_def.localAnchorB.Set( 0, -0.6 );
+
 	revolute_joint_def.collideConnected = false;
 	world->CreateJoint( &revolute_joint_def );
-
-	b2WeldJointDef weld_joint_def;
-	weld_joint_def.bodyA = this->entity_body->getBody();
-	weld_joint_def.localAnchorA.Set( 0, -1 );
-	
-	weld_joint_def.bodyB = this->body_connector->getBody();
-	weld_joint_def.localAnchorB.Set( 0, 1 );
-	weld_joint_def.collideConnected = false;
-	world->CreateJoint( &weld_joint_def );
-
+	//connect robot body to robot base using the revolute joint. Also update the sprite position
 }
 
-void Actor::playerUpdate()
+void Actor::createRobotNeck(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type)
 {
-	this->entity->updateSpritePos(); //updates the player sprite to the box2d object position
+	this->robot_neck = new Object( window, world, fixture, texture, current_index, body_type, shape_type );
+	
+	//neck2 to body joint
+	b2WeldJointDef weld_joint_def;
+	weld_joint_def.bodyA = this->robot_neck->getBody();
+	weld_joint_def.localAnchorA.Set( 0, 0 );
 
-	//REMOVE THE SET TRANSFORM CALL FOR THE BODY ONCE THE JOINT IS WORKING.
-	//this->entity_body->getBody()->SetTransform( b2Vec2( this->entity->getBody()->GetPosition().x, this->entity->getBody()->GetPosition().y + (55 * PIXELS_TO_METERS) ), 0 );
+	weld_joint_def.bodyB = this->robot_body->getBody();
+	weld_joint_def.localAnchorB.Set( 0, 1 );
+	
+	weld_joint_def.collideConnected = false;
+	world->CreateJoint( &weld_joint_def );	
+}
 
+void Actor::createRobotHead(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type)
+{
+	this->robot_head = new Object( window, world, fixture, texture, current_index, body_type, shape_type );
+
+	//head to neck joint
+	b2WeldJointDef weld_joint_def;
+	weld_joint_def.bodyA = this->robot_head->getBody();
+	weld_joint_def.localAnchorA.Set( 0, -1 );
+
+	weld_joint_def.bodyB = this->robot_body->getBody();
+	weld_joint_def.localAnchorB.Set( 0, 0.1 );
+
+	weld_joint_def.collideConnected = false;
+	world->CreateJoint( &weld_joint_def );
+	
+}
+
+void Actor::createRobotArm(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, sf::Texture &robot_body_texture, int current_index, int body_type, int shape_type)
+{
+	this->robot_arm = new Object( window, world, fixture, texture, current_index, body_type, shape_type );	
+	this->robot_arm->getSprite()->setOrigin( texture.getSize().x / 2.0, 0 );
+	
+
+	sf::Vector2f arm_position;
+	arm_position.x = this->robot_body->getSprite()->getPosition().x; 
+	arm_position.y = this->robot_body->getSprite()->getPosition().y;	
+	this->robot_arm->getSprite()->setPosition( arm_position );
+
+	/*
+	//arm to body joint
+	b2RevoluteJointDef revolute_joint_def;
+	revolute_joint_def.bodyA = this->robot_arm->getBody();
+	revolute_joint_def.localAnchorA.Set( 0, 1.0 ); //top middle
+
+	revolute_joint_def.bodyB = this->robot_body->getBody();
+	revolute_joint_def.localAnchorB.Set( 0.05, 0.6 ); //upper middle of body
+
+	revolute_joint_def.collideConnected = false;
+	world->CreateJoint( &revolute_joint_def );
+	*/
+}
+
+void Actor::updateArmRotation(sf::RenderWindow &window)
+{
+	sf::Vector2f difference;
+	sf::Vector2f arm_position;
+	arm_position.x = this->robot_body->getSprite()->getPosition().x; 
+	arm_position.y = this->robot_body->getSprite()->getPosition().y - 5.0;	
+	this->robot_arm->getSprite()->setPosition( arm_position );
+
+	difference.x = sf::Mouse::getPosition(window).x - arm_position.x;
+	difference.y = sf::Mouse::getPosition(window).y - arm_position.y;
+
+	float angle = atan2( difference.x, difference.y ) * -RADTODEG;
+	this->robot_arm->getSprite()->setRotation( angle );
+}
+
+void Actor::playerUpdate(sf::RenderWindow &window)
+{
+	this->updateArmRotation(window);
+
+	this->robot_base->updateSpritePos(); //updates the player sprite to the box2d object position
+	this->robot_body->updateSpritePos();
+	this->robot_head->updateSpritePos();
+
+	this->healthbar->updateBar( sf::Vector2f( this->robot_head->getSprite()->getPosition().x, this->robot_head->getSprite()->getPosition().y ) );
+
+	if( sf::Mouse::getPosition(window).x < this->robot_head->getSprite()->getPosition().x && this->robot_head->getSprite()->getRotation() != 180 )
+	{
+		this->robot_head->getSprite()->setRotation( 180 );
+	}
+
+<<<<<<< HEAD
 	//this->entity_body->updateSpritePos();
+=======
+	else if( sf::Mouse::getPosition(window).x > this->robot_head->getSprite()->getPosition().x && this->robot_head->getSprite()->getRotation() != 0 )
+	{
+		this->robot_head->getSprite()->setRotation( 0 );
+	}
+	
+>>>>>>> player_body
 	this->jump_clock.update(); //used to determine if the player can jump
 	this->keyboardControl(); //used to control player movement
 }
@@ -66,23 +145,33 @@ void Actor::keyboardControl()
 
 	if( sf::Keyboard::isKeyPressed( sf::Keyboard::D ) ) //moving right
 	{
+<<<<<<< HEAD
 		b2Vec2 current_velocity = this->entity->getBody()->GetLinearVelocity();
 		float desired_velocity = 280 * PIXELS_TO_METERS;
+=======
+		b2Vec2 current_velocity = this->robot_base->getBody()->GetLinearVelocity();
+		float desired_velocity = 350 * PIXELS_TO_METERS;
+>>>>>>> player_body
 		float velocity_change = desired_velocity - current_velocity.x;
 
-		float impulse = this->entity->getBody()->GetMass() * velocity_change;
+		float impulse = this->robot_base->getBody()->GetMass() * velocity_change;
 
-		this->entity->getBody()->ApplyLinearImpulse( b2Vec2(impulse, 0), this->entity->getBody()->GetWorldCenter(), true );
+		this->robot_base->getBody()->ApplyLinearImpulse( b2Vec2(impulse, 0), this->robot_base->getBody()->GetWorldCenter(), true );
 	}
 
 	else if( sf::Keyboard::isKeyPressed( sf::Keyboard::A ) ) //moving left
 	{
+<<<<<<< HEAD
 		b2Vec2 current_velocity = this->entity->getBody()->GetLinearVelocity();
 		float desired_velocity = -280 * PIXELS_TO_METERS;
+=======
+		b2Vec2 current_velocity = this->robot_base->getBody()->GetLinearVelocity();
+		float desired_velocity = -350 * PIXELS_TO_METERS;
+>>>>>>> player_body
 		float velocity_change = desired_velocity - current_velocity.x;
-		float impulse = this->entity->getBody()->GetMass() * velocity_change;
+		float impulse = this->robot_base->getBody()->GetMass() * velocity_change;
 
-		this->entity->getBody()->ApplyLinearImpulse( b2Vec2( impulse, 0 ), this->entity->getBody()->GetWorldCenter(), true );
+		this->robot_base->getBody()->ApplyLinearImpulse( b2Vec2( impulse, 0 ), this->robot_base->getBody()->GetWorldCenter(), true );
 	}
 
 	else if( sf::Keyboard::isKeyPressed( sf::Keyboard::S ) ) //stop and drop
@@ -90,22 +179,22 @@ void Actor::keyboardControl()
 		b2Vec2 velocity;
 
 		velocity.x = 0.0; //cancels out velocity on the x axis
-		velocity.y = this->entity->getBody()->GetLinearVelocity().y * 1.2; //increases the velocity that you're falling
+		velocity.y = this->robot_base->getBody()->GetLinearVelocity().y * 1.2; //increases the velocity that you're falling
 
 		velocity.y = ( velocity.y > 0 ) ? -velocity.y : velocity.y; //if player is traveling up, reverses the velocity
 
-		this->entity->getBody()->SetLinearVelocity( velocity );
+		this->robot_base->getBody()->SetLinearVelocity( velocity );
 	}
 
 	if( sf::Keyboard::isKeyPressed( sf::Keyboard::Space ) ) //player jump
 	{
 		if( this->jump_clock.getElapsedTime() >= this->jump_limit )
 		{
-			b2Vec2 current_velocity = this->entity->getBody()->GetLinearVelocity();
-			float impulse = this->getEntity()->getBody()->GetMass() * 12;
+			b2Vec2 current_velocity = this->robot_base->getBody()->GetLinearVelocity();
+			float impulse = this->getRobotBase()->getBody()->GetMass() * 12;
 
-			this->entity->getBody()->SetLinearVelocity( b2Vec2( current_velocity.x, 0 ) ); //cancels out y velocity before jumping
-			this->entity->getBody()->ApplyLinearImpulse( b2Vec2( 0, impulse ), this->entity->getBody()->GetWorldCenter(), true );
+			this->robot_base->getBody()->SetLinearVelocity( b2Vec2( current_velocity.x, 0 ) ); //cancels out y velocity before jumping
+			this->robot_base->getBody()->ApplyLinearImpulse( b2Vec2( 0, impulse ), this->robot_base->getBody()->GetWorldCenter(), true );
 
 			this->jump_clock.restartClock();
 		}
@@ -113,13 +202,32 @@ void Actor::keyboardControl()
 	}
 }
 
-Object* Actor::getEntity()
+Object* Actor::getRobotBase()
 {
-	return( this->entity );
+	return( this->robot_base );
 }
 
-Object* Actor::getEntityBody()
+Object* Actor::getRobotBody()
 {
-	return( this->entity_body );
+	return( this->robot_body );
 }
 
+Object* Actor::getRobotNeck()
+{
+	return( this->robot_neck );
+}
+
+Object* Actor::getRobotHead()
+{
+	return( this->robot_head );
+}
+
+Object* Actor::getRobotArm()
+{
+	return( this->robot_arm );
+}
+
+Health* Actor::getHealthBar()
+{
+	return( this->healthbar );
+}
