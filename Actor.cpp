@@ -66,12 +66,29 @@ void Actor::createRobotHead(sf::RenderWindow &window, b2World *world, b2FixtureD
 	
 }
 
+void Actor::createRobotArm(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, int current_index, int body_type, int shape_type)
+{
+	this->robot_arm = new Object( window, world, fixture, texture, current_index, body_type, shape_type );
+
+	//arm to body joint
+	b2RevoluteJointDef revolute_joint_def;
+	revolute_joint_def.bodyA = this->robot_arm->getBody();
+	revolute_joint_def.localAnchorA.Set( 0, 1.0 ); //top middle
+
+	revolute_joint_def.bodyB = this->robot_body->getBody();
+	revolute_joint_def.localAnchorB.Set( 0.05, 0.6 ); //upper middle of body
+
+	revolute_joint_def.collideConnected = false;
+	world->CreateJoint( &revolute_joint_def );
+}
+
 void Actor::playerUpdate()
 {
 	this->robot_base->updateSpritePos(); //updates the player sprite to the box2d object position
 	this->robot_body->updateSpritePos();
 	//this->robot_neck->updateSpritePos();
 	this->robot_head->updateSpritePos();
+	this->robot_arm->updateSpritePos();
 	
 	this->jump_clock.update(); //used to determine if the player can jump
 	this->keyboardControl(); //used to control player movement
@@ -148,4 +165,9 @@ Object* Actor::getRobotNeck()
 Object* Actor::getRobotHead()
 {
 	return( this->robot_head );
+}
+
+Object* Actor::getRobotArm()
+{
+	return( this->robot_arm );
 }

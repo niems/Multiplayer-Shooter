@@ -17,6 +17,11 @@ const float METERS_TO_PIXELS = 30.0; //number of pixels in one meter
 enum {STATIC, DYNAMIC, KINEMATIC}; //determines which type of box2d object to create
 enum {POLY_SHAPE, CIRCLE_SHAPE}; //determines which type of box2d shape to create
 
+enum entity_category{
+	PLAYER = 0x0001,
+	BOUNDARY = 0x0002,
+};
+
 void updatePosition(b2Body *body, sf::Sprite *sprite_body); //updates the position of the sprite
 void background(sf::RenderWindow &window, sf::Sprite &tile, sf::Vector2u &window_size, sf::Vector2i &background_source, sf::Vector2i &tile_size);
 
@@ -53,10 +58,14 @@ int main()
 	b2FixtureDef player_fixture;
 	b2FixtureDef player_body_fixture;
 
+	player_fixture.filter.categoryBits = entity_category::PLAYER;
+	player_fixture.filter.maskBits = entity_category::BOUNDARY;
 	player_fixture.density = 1;
 	player_fixture.friction = 0.5;
 	player_fixture.restitution = 0;
 
+	player_body_fixture.filter.categoryBits = entity_category::PLAYER;
+	player_body_fixture.filter.maskBits = entity_category::BOUNDARY;
 	player_body_fixture.density = 0.01;
 	player_body_fixture.restitution = 0;
 
@@ -65,13 +74,15 @@ int main()
 	player.getRobotBase()->getBody()->SetAngularVelocity( -500 * PIXELS_TO_METERS );
 
 	player.createRobotBody( window, world, player_body_fixture, images.getPlayerTextures()[Image::PLAYER::ROBOT_BODY], -1, DYNAMIC, POLY_SHAPE );
-	//player.createRobotNeck( window, world, player_body_fixture, images.getPlayerTextures()[Image::PLAYER::ROBOT_NECK1], -1, DYNAMIC, POLY_SHAPE );
 	player.createRobotHead( window, world, player_body_fixture, images.getPlayerTextures()[Image::PLAYER::ROBOT_HEAD], -1, DYNAMIC, POLY_SHAPE );
-
+	player.createRobotArm( window, world, player_body_fixture, images.getPlayerTextures()[Image::PLAYER::ROBOT_ARM], -1, DYNAMIC, POLY_SHAPE );
 	//END NEW PLAYER SETUP////////////////////////
 
 	//NEW GROUND SETUP///////////////////////////
 	b2FixtureDef ground_fixture;
+
+	ground_fixture.filter.categoryBits = entity_category::BOUNDARY;
+	ground_fixture.filter.maskBits = entity_category::PLAYER;
 	ground_fixture.density = 1;
 	ground_fixture.friction = 0.3;
 	ground_fixture.restitution = 0.3;		
@@ -117,6 +128,7 @@ int main()
 		window.draw( *player.getRobotBase()->getSprite() );
 		window.draw( *player.getRobotBody()->getSprite() );
 		window.draw( *player.getRobotHead()->getSprite() );
+		window.draw( *player.getRobotArm()->getSprite() );
 		
 		
 
