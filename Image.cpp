@@ -64,7 +64,7 @@ Image::Image()
 	robot_head_sprite.setOrigin( this->player_textures.back().getSize().x / 2.0, this->player_textures.back().getSize().y / 2.0 );
 	this->player_sprites.push_back( robot_head_sprite );	
 
-	if( !robot_arm_texture.loadFromFile("images//robot_arm.png") )
+	if( !robot_arm_texture.loadFromFile("images//robot_arm5.png") )
 	{
 		cout << "Failed to load robot arm texture on line: " << __LINE__ << endl;
 	}

@@ -135,8 +135,7 @@ int main()
 		
 
 		//draw to display
-		window.clear( sf::Color(150, 150, 150) );
-
+		window.clear();
         //tile background
 		background(window, images.getBackgroundSprites()[Image::BACKGROUND::SKY1], window_size, background_source, background_tile_size);
 
