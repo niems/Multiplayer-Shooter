@@ -1,3 +1,4 @@
+#include <SFML\Audio.hpp>
 #include <SFML\Graphics.hpp>
 #include <Box2D\Box2D.h>
 #include <iostream>
@@ -32,6 +33,18 @@ int main()
 	window.setFramerateLimit(60);
 
 	Image images; //loads all textures and sprites
+
+
+	sf::Music background_music;
+
+	if( !background_music.openFromFile("music//solo.ogg") )
+	{
+		cout << "Failed to load background music." << endl;
+	}
+
+	background_music.play();
+	background_music.setLoop( true );
+	
 
 	//////WORLD SETUP////////////////////
 	b2Vec2 gravity(0, -18.0);
@@ -135,9 +148,9 @@ int main()
 		
 
 		//draw to display
-		window.clear();
+		window.clear( sf::Color(80, 80, 80) );
         //tile background
-		background(window, images.getBackgroundSprites()[Image::BACKGROUND::SKY1], window_size, background_source, background_tile_size);
+		//background(window, images.getBackgroundSprites()[Image::BACKGROUND::SKY1], window_size, background_source, background_tile_size);
 
 		//draw ground
 		window.draw( *ground_object.getSprite() );

@@ -22,7 +22,7 @@ Image::Image()
 	sf::Texture robot_arm_texture;
 	sf::Sprite robot_arm_sprite;
 
-	if( !robot_base_texture.loadFromFile("images//wheel7.png") )
+	if( !robot_base_texture.loadFromFile("images//wheel8.png") )
 	{
 		cout << "Failed to load robot base texture on line: " << __LINE__ << endl;
 	}
@@ -33,7 +33,7 @@ Image::Image()
 	this->platform_sprites.push_back( robot_base_sprite );
 
 
-	if( !robot_body_texture.loadFromFile("images//robot_body4.png") )
+	if( !robot_body_texture.loadFromFile("images//robot_body14.png") )
 	{
 		cout << "Failed to load robot body texture on line: " << __LINE__ << endl;
 	}
@@ -54,7 +54,7 @@ Image::Image()
 	robot_neck_sprite.setOrigin( this->player_textures.back().getSize().x / 2.0, this->player_textures.back().getSize().y / 2.0 );
 	this->player_sprites.push_back( robot_neck_sprite );
 
-	if( !robot_head_texture.loadFromFile("images//robot_head.png") )
+	if( !robot_head_texture.loadFromFile("images//robot_head3.png") )
 	{
 		cout << "Failed to load robot head texture on line: " << __LINE__ << endl;
 	}
@@ -64,7 +64,7 @@ Image::Image()
 	robot_head_sprite.setOrigin( this->player_textures.back().getSize().x / 2.0, this->player_textures.back().getSize().y / 2.0 );
 	this->player_sprites.push_back( robot_head_sprite );	
 
-	if( !robot_arm_texture.loadFromFile("images//robot_arm5.png") )
+	if( !robot_arm_texture.loadFromFile("images//robot_arm6.png") )
 	{
 		cout << "Failed to load robot arm texture on line: " << __LINE__ << endl;
 	}

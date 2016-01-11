@@ -31,7 +31,7 @@ void Actor::createRobotBody(sf::RenderWindow &window, b2World *world, b2FixtureD
 	revolute_joint_def.localAnchorA.Set( 0, 0 );
 
 	revolute_joint_def.bodyB = this->robot_body->getBody();
-	revolute_joint_def.localAnchorB.Set( 0, -0.6 );
+	revolute_joint_def.localAnchorB.Set( 0, -0.65 );
 
 	revolute_joint_def.collideConnected = false;
 	world->CreateJoint( &revolute_joint_def );
@@ -64,7 +64,7 @@ void Actor::createRobotHead(sf::RenderWindow &window, b2World *world, b2FixtureD
 	weld_joint_def.localAnchorA.Set( 0, -1 );
 
 	weld_joint_def.bodyB = this->robot_body->getBody();
-	weld_joint_def.localAnchorB.Set( 0, 0.1 );
+	weld_joint_def.localAnchorB.Set( 0, 0.6 );
 
 	weld_joint_def.collideConnected = false;
 	world->CreateJoint( &weld_joint_def );
