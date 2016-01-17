@@ -68,7 +68,6 @@ void Actor::createRobotHead(sf::RenderWindow &window, b2World *world, b2FixtureD
 
 	weld_joint_def.collideConnected = false;
 	world->CreateJoint( &weld_joint_def );
-	
 }
 
 void Actor::createRobotArm(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, sf::Texture &texture, sf::Texture &robot_body_texture, int current_index, int body_type, int shape_type)
@@ -139,10 +138,35 @@ void Actor::keyboardControl()
 {
 	this->jump_clock.update(); //must be called every iteration to stay accurate!
 
-	if( sf::Keyboard::isKeyPressed( sf::Keyboard::D ) ) //moving right
+	if( ( sf::Keyboard::isKeyPressed( sf::Keyboard::LShift ) || sf::Keyboard::isKeyPressed( sf::Keyboard::RShift ) ) && //holding shift and moving left
+	   sf::Keyboard::isKeyPressed( sf::Keyboard::A ) )
 	{
 		b2Vec2 current_velocity = this->robot_base->getBody()->GetLinearVelocity();
-		float desired_velocity = 350 * PIXELS_TO_METERS;
+		float desired_velocity = -200 * PIXELS_TO_METERS;
+		float velocity_change = desired_velocity - current_velocity.x;
+		float impulse = this->robot_base->getBody()->GetMass() * velocity_change;
+
+		this->robot_base->getBody()->ApplyLinearImpulse( b2Vec2( impulse, 0 ), this->robot_base->getBody()->GetWorldCenter(), true );
+	}
+
+	else if( ( sf::Keyboard::isKeyPressed( sf::Keyboard::LShift ) || sf::Keyboard::isKeyPressed( sf::Keyboard::RShift ) ) &&
+		     sf::Keyboard::isKeyPressed( sf::Keyboard::D ) )
+	{
+		b2Vec2 current_velocity = this->robot_base->getBody()->GetLinearVelocity();
+		float desired_velocity = 200 * PIXELS_TO_METERS;
+		float velocity_change = desired_velocity - current_velocity.x;
+
+		float impulse = this->robot_base->getBody()->GetMass() * velocity_change;
+
+		this->robot_base->getBody()->ApplyLinearImpulse( b2Vec2(impulse, 0), this->robot_base->getBody()->GetWorldCenter(), true );
+	}
+
+
+	
+	else if( sf::Keyboard::isKeyPressed( sf::Keyboard::D ) ) //moving right
+	{
+		b2Vec2 current_velocity = this->robot_base->getBody()->GetLinearVelocity();
+		float desired_velocity = 400 * PIXELS_TO_METERS;
 		float velocity_change = desired_velocity - current_velocity.x;
 
 		float impulse = this->robot_base->getBody()->GetMass() * velocity_change;
@@ -153,14 +177,16 @@ void Actor::keyboardControl()
 	else if( sf::Keyboard::isKeyPressed( sf::Keyboard::A ) ) //moving left
 	{
 		b2Vec2 current_velocity = this->robot_base->getBody()->GetLinearVelocity();
-		float desired_velocity = -350 * PIXELS_TO_METERS;
+		float desired_velocity = -400 * PIXELS_TO_METERS;
 		float velocity_change = desired_velocity - current_velocity.x;
 		float impulse = this->robot_base->getBody()->GetMass() * velocity_change;
 
 		this->robot_base->getBody()->ApplyLinearImpulse( b2Vec2( impulse, 0 ), this->robot_base->getBody()->GetWorldCenter(), true );
 	}
+	
+	
 
-	else if( sf::Keyboard::isKeyPressed( sf::Keyboard::S ) ) //stop and drop
+	if( sf::Keyboard::isKeyPressed( sf::Keyboard::S ) ) //stop and drop
 	{
 		b2Vec2 velocity;
 
