@@ -13,6 +13,8 @@ Weapons::Weapons(b2World *world)
 	world_particle_system_def.maxCount = 1000; //total number of particles allowed in the system at any given time
 
 	this->particle_system = world->CreateParticleSystem( &world_particle_system_def );	
+	
+	
 
 
 	//single shot setup
@@ -26,6 +28,7 @@ Weapons::Weapons(b2World *world)
 	
 }
 
+/*
 //pass player position and mouse position so the angle can be calculated
 void Weapons::singleShot(b2World *world, const b2Vec2 &pos) //creates single shot projectile
 {
@@ -57,11 +60,46 @@ void Weapons::singleShot(b2World *world, const b2Vec2 &pos) //creates single sho
 
 	this->projectile_single_shot.back()->particle_body->ApplyLinearImpulse( b2Vec2( 140 * PIXELS_TO_METERS, -50 * -PIXELS_TO_METERS ), this->projectile_single_shot.back()->particle_body->GetWorldCenter(), true );
 
-}
+} */
 
-void singleShot(b2World *world, const b2Vec2 &player_pos, sf::Vector2i &mouse_pos)
+void Weapons::singleShot(b2World *world, const sf::Vector2f &player_pos, sf::Vector2i &mouse_pos)
 {
+	b2BodyDef body_def;
+	b2CircleShape body_shape;
+	b2FixtureDef body_fixture;
+	b2Body *body;
+	Projectile *temp_projectile = new Projectile();
 
+	float velocity = 130; //in pixels per second
+
+
+	//find angle
+	float distance = sqrt( pow( mouse_pos.x - player_pos.x, 2 ) + pow( mouse_pos.y - player_pos.y, 2 ) );
+	temp_projectile->velocity.x = velocity * ( ( mouse_pos.x - player_pos.x ) / distance );
+	temp_projectile->velocity.y = velocity * ( ( mouse_pos.y - player_pos.y ) / distance );
+
+	body_def.type = b2_dynamicBody;
+	body_def.bullet = true;
+	body_def.gravityScale = 0.4;
+	body_def.position.Set( player_pos.x * PIXELS_TO_METERS, player_pos.y * -METERS_TO_PIXELS );
+
+	body_shape.m_radius = 10 * PIXELS_TO_METERS;
+	
+	body_fixture.shape = &body_shape;
+	body_fixture.density = 0.5;
+	body_fixture.filter.categoryBits = entity_category::PLAYER_WEAPON;
+	body_fixture.filter.maskBits = entity_category::BOUNDARY | entity_category::ENEMY_WEAPON;
+	
+
+	body = world->CreateBody( &body_def );
+	body->CreateFixture( &body_fixture );
+
+	temp_projectile->particle_body = body;
+	temp_projectile->type = TYPE::SINGLE_SHOT;
+	this->projectile_single_shot.push_back( temp_projectile );
+
+	this->projectile_single_shot.back()->particle_body->SetTransform( b2Vec2( player_pos.x * PIXELS_TO_METERS, player_pos.y * -PIXELS_TO_METERS ), 0 );
+	this->projectile_single_shot.back()->particle_body->ApplyLinearImpulse( b2Vec2( temp_projectile->velocity.x * PIXELS_TO_METERS, temp_projectile->velocity.y * -PIXELS_TO_METERS ), this->projectile_single_shot.back()->particle_body->GetWorldCenter(), true );
 }
 
 void Weapons::updateSingleShot() //used to update this type of projectile every

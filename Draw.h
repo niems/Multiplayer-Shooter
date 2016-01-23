@@ -1,6 +1,7 @@
 #ifndef DRAW_H
 #define DRAW_H
 #include <SFML\Graphics.hpp>
+#include <iostream>
 #include "Weapons.h"
 #include <vector>
 using namespace std;

@@ -4,6 +4,7 @@
 #include <Box2D\Box2D.h>
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <math.h>
 using namespace std;
 
 //float PIXELS_TO_METERS = 0.03333; //number of meters in one pixel
@@ -14,6 +15,8 @@ struct Projectile
 	//sf::CircleShape shape; //circle shape used with the projectile type
 	int type; //determines which shape is outputted when drawn
 	b2Body *particle_body; 
+	sf::Vector2f velocity;
+	//maybe have one particle group per projectile. After this is implemented, the vector 'shape' won't be needed.
 };
 
 //DON'T PUT A SHAPE INSIDE THE PROJECTILE CLASS. PUT A TYPE AND USE THE TYPE TO DETERMINE WHICH SHAPE TO USE
@@ -54,10 +57,10 @@ public:
 	Weapons(b2World *world);
 
 	//create particles
-	void singleShot(b2World *world, const b2Vec2 &pos); //creates this projectile particle group
+	//void singleShot(b2World *world, const b2Vec2 &pos); //creates this projectile particle group
 
 	//uses angle to fire projectile
-	void singleShot(b2World *world, const b2Vec2 &player_pos, sf::Vector2i &mouse_pos);
+	void singleShot(b2World *world, const sf::Vector2f &player_pos, sf::Vector2i &mouse_pos);
 
 	//update particles
 	void updateSingleShot();

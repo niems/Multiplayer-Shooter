@@ -41,7 +41,7 @@ int main()
 
 	sf::Music background_music;
 
-	if( !background_music.openFromFile("music//solo.ogg") )
+	if( !background_music.openFromFile("music//fly.ogg") )
 	{
 		cout << "Failed to load background music." << endl;
 	}
@@ -89,7 +89,7 @@ int main()
 	player_body_fixture.restitution = 0;
 
 	Actor player(window, world, player_fixture, images.getPlayerTextures()[Image::PLAYER::ROBOT_BASE], -1, DYNAMIC, CIRCLE_SHAPE);
-	player.getRobotBase()->getBody()->SetTransform( b2Vec2( (window_size.x / 2.0) * PIXELS_TO_METERS, -100 * PIXELS_TO_METERS ), 0 );
+	player.getRobotBase()->getBody()->SetTransform( b2Vec2( (window_size.x / 2.0) * PIXELS_TO_METERS, (window_size.y / 2.5) * -PIXELS_TO_METERS ), 0 );
 	player.getRobotBase()->getBody()->SetAngularVelocity( -500 * PIXELS_TO_METERS );
 
 	player.createRobotBody( window, world, player_body_fixture, images.getPlayerTextures()[Image::PLAYER::ROBOT_BODY], -1, DYNAMIC, POLY_SHAPE );
@@ -140,19 +140,15 @@ int main()
 
 		if( player_weapon_clock.getElapsedTime() > 0.5 && sf::Mouse::isButtonPressed( sf::Mouse::Left ) )
 		{
-			player_weapon.singleShot( world, player.getRobotBody()->getBody()->GetPosition() );
+			//player_weapon.singleShot( world, player.getRobotArm()->getBody()->GetPosition(), sf::Mouse::getPosition( window ) );
+			player_weapon.singleShot( world, player.getRobotArm()->getSprite()->getPosition(), sf::Mouse::getPosition( window ) );
 			player_weapon_clock.restartClock();
+
+			cout << "projectile count: " << player_weapon.getSingleShotProjectile().size() << endl;
 		}
 
 		
-		cout << "projectiles: " << player_weapon.getSingleShotProjectile().size() << endl;
-
-		if( player_weapon.getSingleShotProjectile().size() > 0 )
-		{
-			//cout << player_weapon.getSingleShotProjectile().back()->shape.getPosition().x << ", ";
-			//cout << player_weapon.getSingleShotProjectile().back()->shape.getPosition().y << endl << endl;
-			//cout << "( " << player_weapon.getSingleShotProjectile().back()->particle_body->GetPosition().x * METERS_TO_PIXELS << ", " << player_weapon.getSingleShotProjectile().back()->particle_body->GetPosition().y * -METERS_TO_PIXELS << " )" << endl;
-		}
+		//cout << "projectiles: " << player_weapon.getSingleShotProjectile().size() << endl;
 		
 
 		if( damage_clock.getElapsedTime() >= 0.1 )
