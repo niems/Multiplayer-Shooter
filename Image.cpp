@@ -51,7 +51,7 @@ Image::Image()
 
 	this->player_textures.push_back( robot_neck_texture );
 	robot_neck_sprite.setTexture( this->player_textures.back() );
-	robot_neck_sprite.setOrigin( this->player_textures.back().getSize().x / 2.0, this->player_textures.back().getSize().y / 2.0 );
+	robot_neck_sprite.setOrigin( this->player_textures.back().getSize().x / 2.0, this->player_textures.back().getSize().y / 2.0 ); 
 	this->player_sprites.push_back( robot_neck_sprite );
 
 	if( !robot_head_texture.loadFromFile("images//robot_head3.png") )

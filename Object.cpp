@@ -79,7 +79,7 @@ Object::Object(sf::RenderWindow &window, b2World *world, b2FixtureDef &fixture, 
 		body_def.type = b2_kinematicBody;
 
 	body_def.position.Set(0, 0); //default starting position (top left of the screen)
-
+	 
 	if(shape_type == POLY_SHAPE)
 	{
 		poly_shape.SetAsBox( (size.x / 2.0) * PIXELS_TO_METERS, (size.y / 2.0) * PIXELS_TO_METERS );

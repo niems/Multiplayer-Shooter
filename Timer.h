@@ -6,7 +6,7 @@
 using namespace std;
 
 class Timer
-{
+{ 
 private:
 	sf::Clock clock; //used to update the elapsed time
 

@@ -5,6 +5,8 @@
 #include "Object.h"
 #include "Image.h"
 #include "Actor.h"
+#include "Weapons.h"
+#include "Draw.h"
 #include "Timer.h"
 
 using namespace std;
@@ -21,6 +23,8 @@ enum {POLY_SHAPE, CIRCLE_SHAPE}; //determines which type of box2d shape to creat
 enum entity_category{
 	PLAYER = 0x0001,
 	BOUNDARY = 0x0002,
+	PLAYER_WEAPON = 0x0004,
+	ENEMY_WEAPON = 0x0008,
 };
 
 void updatePosition(b2Body *body, sf::Sprite *sprite_body); //updates the position of the sprite
@@ -31,7 +35,7 @@ int main()
     sf::RenderWindow window( sf::VideoMode(1440, 900), "Shooter" );
 	sf::Vector2u window_size = sf::Vector2u(window.getSize().x, window.getSize().y);
 	window.setFramerateLimit(60);
-
+	
 	Image images; //loads all textures and sprites
 
 
@@ -68,6 +72,8 @@ int main()
 	///////////END BACKGROUND SETUP///////////////////////////
 
 	//NEW PLAYER SETUP////////////////////////////
+	Timer player_weapon_clock;
+	Weapons player_weapon(world); //sets up the use of weapons for the player
 	b2FixtureDef player_fixture;
 	b2FixtureDef player_body_fixture;
 
@@ -109,7 +115,7 @@ int main()
 
 	Timer damage_clock;
 	
-
+	 
     while (window.isOpen())
     {
         sf::Event e;
@@ -125,9 +131,28 @@ int main()
 		world->Step( timeStep, velocity_iterations, position_iterations );
 
 		//update clocks
+		player_weapon_clock.update();
 		damage_clock.update();
 		
 		player.playerUpdate(window); //updates everything to do with the player
+
+		
+
+		if( player_weapon_clock.getElapsedTime() > 0.5 && sf::Mouse::isButtonPressed( sf::Mouse::Left ) )
+		{
+			player_weapon.singleShot( world, b2Vec2( ( window.getSize().x / 2.0 ) * METERS_TO_PIXELS, ( window.getSize().y / 2.0 ) * -METERS_TO_PIXELS ) );
+			player_weapon_clock.restartClock();
+		}
+
+		
+		cout << "projectiles: " << player_weapon.getSingleShotProjectile().size() << endl;
+
+		if( player_weapon.getSingleShotProjectile().size() > 0 )
+		{
+			//cout << player_weapon.getSingleShotProjectile().back()->shape.getPosition().x << ", ";
+			//cout << player_weapon.getSingleShotProjectile().back()->shape.getPosition().y << endl << endl;
+			//cout << "( " << player_weapon.getSingleShotProjectile().back()->particle_body->GetPosition().x * METERS_TO_PIXELS << ", " << player_weapon.getSingleShotProjectile().back()->particle_body->GetPosition().y * -METERS_TO_PIXELS << " )" << endl;
+		}
 
 
 		if( damage_clock.getElapsedTime() >= 0.1 )
@@ -145,6 +170,8 @@ int main()
 			}
 		}
 		
+		//update particles
+		//player_weapon.updateSingleShot(); //updates the single shot particles
 		
 
 		//draw to display
@@ -154,6 +181,10 @@ int main()
 
 		//draw ground
 		window.draw( *ground_object.getSprite() );
+
+		//draw particles
+		Draw::drawSingleShotProjectiles( window, player_weapon.getSingleShotProjectile(), player_weapon.getParticleShapes() );
+		//Draw::drawParticles( window, );
 
 		//draw player
 		//window.draw( *player.getRobotNeck()->getSprite() );

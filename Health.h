@@ -9,7 +9,7 @@ private:
 	sf::RectangleShape *bar;
 	sf::Vector2f offset;
 	int current_health;
-	int max_health;
+	int max_health; 
 
 public:
 	Health();

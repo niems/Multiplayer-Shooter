@@ -7,7 +7,7 @@ Health::Health()
 	this->max_health = 0;
 }
 
-Health::Health(sf::Vector2f &size, sf::Vector2f &pos, int current_hp, int max_hp)
+Health::Health(sf::Vector2f &size, sf::Vector2f &pos, int current_hp, int max_hp) 
 {
 	sf::Vector2f bar_pos;
 	sf::Vector2f bar_size;

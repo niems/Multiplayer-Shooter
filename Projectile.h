@@ -6,7 +6,7 @@
 class Projectile
 {
 private:
-	b2Body *projectile_body;
+	b2Body *projectile_body; 
 	
 public:
 

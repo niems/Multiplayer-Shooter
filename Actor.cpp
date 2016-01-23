@@ -151,7 +151,7 @@ void Actor::keyboardControl()
 
 	else if( ( sf::Keyboard::isKeyPressed( sf::Keyboard::LShift ) || sf::Keyboard::isKeyPressed( sf::Keyboard::RShift ) ) &&
 		     sf::Keyboard::isKeyPressed( sf::Keyboard::D ) )
-	{
+	{ 
 		b2Vec2 current_velocity = this->robot_base->getBody()->GetLinearVelocity();
 		float desired_velocity = 200 * PIXELS_TO_METERS;
 		float velocity_change = desired_velocity - current_velocity.x;
