@@ -102,7 +102,7 @@ int main()
 	b2FixtureDef ground_fixture;
 
 	ground_fixture.filter.categoryBits = entity_category::BOUNDARY;
-	ground_fixture.filter.maskBits = entity_category::PLAYER;
+	ground_fixture.filter.maskBits = entity_category::PLAYER | entity_category::PLAYER_WEAPON | entity_category::ENEMY_WEAPON;
 	ground_fixture.density = 1;
 	ground_fixture.friction = 0.3;
 	ground_fixture.restitution = 0.3;		
@@ -140,7 +140,7 @@ int main()
 
 		if( player_weapon_clock.getElapsedTime() > 0.5 && sf::Mouse::isButtonPressed( sf::Mouse::Left ) )
 		{
-			player_weapon.singleShot( world, b2Vec2( ( window.getSize().x / 2.0 ) * METERS_TO_PIXELS, ( window.getSize().y / 2.0 ) * -METERS_TO_PIXELS ) );
+			player_weapon.singleShot( world, player.getRobotBody()->getBody()->GetPosition() );
 			player_weapon_clock.restartClock();
 		}
 
@@ -153,7 +153,7 @@ int main()
 			//cout << player_weapon.getSingleShotProjectile().back()->shape.getPosition().y << endl << endl;
 			//cout << "( " << player_weapon.getSingleShotProjectile().back()->particle_body->GetPosition().x * METERS_TO_PIXELS << ", " << player_weapon.getSingleShotProjectile().back()->particle_body->GetPosition().y * -METERS_TO_PIXELS << " )" << endl;
 		}
-
+		
 
 		if( damage_clock.getElapsedTime() >= 0.1 )
 		{

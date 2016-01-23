@@ -38,6 +38,9 @@ private:
 	
 
 public:
+	float PIXELS_TO_METERS; //number of meters in one pixel
+	float METERS_TO_PIXELS; //number of pixels in one meter
+
 	enum TYPE{ SINGLE_SHOT };
 
 	enum entity_category{
@@ -53,6 +56,8 @@ public:
 	//create particles
 	void singleShot(b2World *world, const b2Vec2 &pos); //creates this projectile particle group
 
+	//uses angle to fire projectile
+	void singleShot(b2World *world, const b2Vec2 &player_pos, sf::Vector2i &mouse_pos);
 
 	//update particles
 	void updateSingleShot();

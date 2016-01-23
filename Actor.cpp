@@ -108,18 +108,30 @@ void Actor::updateArmRotation(sf::RenderWindow &window)
 
 	float angle = atan2( difference.x, difference.y ) * -RADTODEG;
 	this->robot_arm->getSprite()->setRotation( angle );
+
+	//rotates head based on robot arm rotation
+	//this->robot_head->getBody()->SetTransform( this->robot_head->getBody()->GetPosition(), this->robot_arm->getBody()->GetAngle() );
+	//this->robot_head->getBody()->setan
+	//this->robot_head->getSprite()->setRotation( this->robot_arm->getSprite()->getRotation() );
 }
 
 void Actor::playerUpdate(sf::RenderWindow &window)
 {
 	this->updateArmRotation(window);
 
+	//this->robot_head->getBody()->SetTransform( this->robot_head->getBody()->GetPosition(), this->getRobotArm()->getBody()->GetAngle() );
+
 	this->robot_base->updateSpritePos(); //updates the player sprite to the box2d object position
 	this->robot_body->updateSpritePos();
 	this->robot_head->updateSpritePos();
+	this->robot_head->getSprite()->setRotation( this->robot_arm->getSprite()->getRotation() + 90.0 );
+	
 
 	this->healthbar->updateBar( sf::Vector2f( this->robot_head->getSprite()->getPosition().x, this->robot_head->getSprite()->getPosition().y ) );
 
+
+	//UNCOMMENT FOR ROBOT HEAD TO NOT ROTATE BASED ON ROBOT ARM
+	/* 
 	if( sf::Mouse::getPosition(window).x < this->robot_head->getSprite()->getPosition().x && this->robot_head->getSprite()->getRotation() != 180 )
 	{
 		this->robot_head->getSprite()->setRotation( 180 );
@@ -129,7 +141,8 @@ void Actor::playerUpdate(sf::RenderWindow &window)
 	{
 		this->robot_head->getSprite()->setRotation( 0 );
 	}
-	
+	*/
+
 	this->jump_clock.update(); //used to determine if the player can jump
 	this->keyboardControl(); //used to control player movement
 }
