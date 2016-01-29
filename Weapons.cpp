@@ -6,13 +6,31 @@ Weapons::Weapons(b2World *world)
 	this->METERS_TO_PIXELS = 30.0;
 	b2ParticleSystemDef world_particle_system_def;
 	b2ParticleSystem *world_particle_system;
-	sf::CircleShape *shape = new sf::CircleShape( 5.0 );
+	sf::CircleShape *shape = new sf::CircleShape( 3.0 );
+
+
+	//SINGLE SHOT SYSTEM SETUP//////////////////////
+	b2ParticleSystem *single_shot_system = NULL; //holds particles of the single shot type
+	b2ParticleSystemDef single_shot_system_def;
+
+	single_shot_system_def.radius = shape->getRadius() * this->PIXELS_TO_METERS;
+	single_shot_system_def.destroyByAge = true;
+	//single_shot_system_def.lifetimeGranularity = 0.5; //number of seconds the particle lives for
+
+	this->particle_systems.push_back( single_shot_system );
+	this->particle_systems.back() = world->CreateParticleSystem( &single_shot_system_def );
+	this->particle_systems.back()->SetDestructionByAge( true );
 	
+
+
+	//END SINGLE SHOT SYSTEM SETUP///////////////////	
 	world_particle_system_def.density = 1;
 	world_particle_system_def.radius = shape->getRadius() * PIXELS_TO_METERS;
-	world_particle_system_def.maxCount = 1000; //total number of particles allowed in the system at any given time
+	world_particle_system_def.maxCount = 100; //total number of particles allowed in the system at any given time
 
 	this->particle_system = world->CreateParticleSystem( &world_particle_system_def );	
+	this->particle_system->SetDestructionByAge( true );
+	this->particle_system->SetParticleLifetime( 0, 0.5 );
 	
 	
 
@@ -23,7 +41,7 @@ Weapons::Weapons(b2World *world)
 	this->shape.push_back( shape );
 	this->shape.back()->setFillColor( sf::Color( 0, 255, 255 ) );
 	this->shape.back()->setOutlineColor( sf::Color( 128, 255, 255 ) );
-	this->shape.back()->setOutlineThickness( 2 );
+	this->shape.back()->setOutlineThickness( 1 );
 	this->shape.back()->setOrigin( this->shape.back()->getRadius(), this->shape.back()->getRadius() );
 	
 }
@@ -69,6 +87,9 @@ void Weapons::singleShot(b2World *world, const sf::Vector2f &player_pos, sf::Vec
 	b2FixtureDef body_fixture;
 	b2Body *body;
 	Projectile *temp_projectile = new Projectile();
+	b2ParticleGroupDef particle_group_def;
+
+	
 
 	float velocity = 130; //in pixels per second
 
@@ -100,6 +121,26 @@ void Weapons::singleShot(b2World *world, const sf::Vector2f &player_pos, sf::Vec
 
 	this->projectile_single_shot.back()->particle_body->SetTransform( b2Vec2( player_pos.x * PIXELS_TO_METERS, player_pos.y * -PIXELS_TO_METERS ), 0 );
 	this->projectile_single_shot.back()->particle_body->ApplyLinearImpulse( b2Vec2( temp_projectile->velocity.x * PIXELS_TO_METERS, temp_projectile->velocity.y * -PIXELS_TO_METERS ), this->projectile_single_shot.back()->particle_body->GetWorldCenter(), true );
+
+	particle_group_def.shape = &body_shape;
+	particle_group_def.flags = b2_elasticParticle;
+	particle_group_def.angle = -0.5f;
+	particle_group_def.angularVelocity = 2.0f;
+	particle_group_def.position.Set( projectile_single_shot.back()->particle_body->GetPosition().x, projectile_single_shot.back()->particle_body->GetPosition().y );
+
+	//this->particle_system->CreateParticleGroup( particle_group_def );
+	this->particle_system->GetPositionBuffer()[0];
+}
+
+void Weapons::particleSingleShot(b2World *world, const sf::Vector2f &player_pos, sf::Vector2i &mouse_pos)
+{
+	b2ParticleDef particle_def;
+	particle_def.lifetime = 0.5;
+	particle_def.position.Set( player_pos.x * this->PIXELS_TO_METERS, player_pos.y * -this->PIXELS_TO_METERS );
+	particle_def.flags = b2_elasticParticle;
+
+	this->particle_systems[Weapons::TYPE::SINGLE_SHOT]->CreateParticle(particle_def);
+	this->particle_systems[Weapons::TYPE::SINGLE_SHOT];
 }
 
 void Weapons::updateSingleShot() //used to update this type of projectile every
@@ -121,4 +162,9 @@ vector<Projectile *> Weapons::getSingleShotProjectile()
 vector<sf::CircleShape *> Weapons::getParticleShapes()
 {
 	return( this->shape );
+}
+
+vector<b2ParticleSystem *> Weapons::getParticleSystems()
+{
+	return( this->particle_systems );
 }

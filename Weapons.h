@@ -31,6 +31,7 @@ private:
 	vector<float> max_effect_duration; //the longest amount of time the effect will last before being destroyed
 
 	b2ParticleSystem *particle_system; //all the particle effects run in this particle system
+	vector<b2ParticleSystem *> particle_systems;
 
 	//one vector per projectile type that stores all the box2d bodies from the projectile class
 	//vector<b2Body *> particles_single_shot;
@@ -62,11 +63,15 @@ public:
 	//uses angle to fire projectile
 	void singleShot(b2World *world, const sf::Vector2f &player_pos, sf::Vector2i &mouse_pos);
 
+	void particleSingleShot(b2World *world, const sf::Vector2f &player_pos, sf::Vector2i &mouse_pos);
+
 	//update particles
 	void updateSingleShot();
 
 	vector<Projectile *> getSingleShotProjectile();
 	vector<sf::CircleShape *> getParticleShapes();
+
+	vector<b2ParticleSystem *> getParticleSystems();
 
 	
 

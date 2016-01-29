@@ -41,12 +41,12 @@ int main()
 
 	sf::Music background_music;
 
-	if( !background_music.openFromFile("music//fly.ogg") )
+	if( !background_music.openFromFile("music//saw_music.ogg") )
 	{
 		cout << "Failed to load background music." << endl;
 	}
 
-	background_music.play();
+	//background_music.play();
 	background_music.setLoop( true );
 	
 
@@ -138,13 +138,16 @@ int main()
 
 		
 
-		if( player_weapon_clock.getElapsedTime() > 0.5 && sf::Mouse::isButtonPressed( sf::Mouse::Left ) )
+		if( player_weapon_clock.getElapsedTime() > 0.1 && sf::Mouse::isButtonPressed( sf::Mouse::Left ) )
 		{
 			//player_weapon.singleShot( world, player.getRobotArm()->getBody()->GetPosition(), sf::Mouse::getPosition( window ) );
-			player_weapon.singleShot( world, player.getRobotArm()->getSprite()->getPosition(), sf::Mouse::getPosition( window ) );
+			//player_weapon.singleShot( world, player.getRobotArm()->getSprite()->getPosition(), sf::Mouse::getPosition( window ) );
 			player_weapon_clock.restartClock();
 
-			cout << "projectile count: " << player_weapon.getSingleShotProjectile().size() << endl;
+			//cout << "projectile count: " << player_weapon.getSingleShotProjectile().size() << endl;
+
+			player_weapon.particleSingleShot( world, player.getRobotArm()->getSprite()->getPosition(), sf::Mouse::getPosition( window ) );
+			
 		}
 
 		
@@ -180,6 +183,8 @@ int main()
 
 		//draw particles
 		Draw::drawSingleShotProjectiles( window, player_weapon.getSingleShotProjectile(), player_weapon.getParticleShapes() );
+
+		Draw::drawSingleShotParticles( window, player_weapon.getParticleSystems(), player_weapon.getParticleShapes() );
 		//Draw::drawParticles( window, );
 
 		//draw player

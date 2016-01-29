@@ -22,3 +22,21 @@ void Draw::drawSingleShotProjectiles( sf::RenderWindow &window, vector<Projectil
 		window.draw( *( shapes[Weapons::TYPE::SINGLE_SHOT] ) );
 	}
 }
+
+void Draw::drawSingleShotParticles( sf::RenderWindow &window, vector<b2ParticleSystem *> particle_systems, vector<sf::CircleShape *> shapes )
+{
+	//shapes[Weapons::TYPE::SINGLE_SHOT]->setRadius( particle_systems[Weapons::TYPE::SINGLE_SHOT]->GetRadius() * METERS_TO_PIXELS );
+
+	b2Vec2 pos;
+	for( int i = 0; i < particle_systems[Weapons::TYPE::SINGLE_SHOT]->GetParticleCount(); i++ )
+	{
+		pos = particle_systems[Weapons::TYPE::SINGLE_SHOT]->GetPositionBuffer()[i];
+
+		if( &pos != NULL )
+		{
+			shapes[Weapons::TYPE::SINGLE_SHOT]->setPosition( pos.x * METERS_TO_PIXELS, pos.y * -METERS_TO_PIXELS );
+			window.draw( *shapes[Weapons::TYPE::SINGLE_SHOT] );
+		}
+		
+	}
+}

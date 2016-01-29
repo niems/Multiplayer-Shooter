@@ -14,6 +14,8 @@ public:
 	static void drawParticles( sf::RenderWindow &window, vector<Projectile> &particles );
 
 	static void drawSingleShotProjectiles( sf::RenderWindow &window, vector<Projectile *> projectiles, vector<sf::CircleShape *> shapes );
+
+	static void drawSingleShotParticles( sf::RenderWindow &window, vector<b2ParticleSystem *> particle_systems, vector<sf::CircleShape *> shapes );
 };
 
 #endif
